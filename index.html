@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hybrid Billing System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            max-width: 500px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-right: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .apartment-label {
+            font-weight: bold;
+        }
+        .instructions {
+            max-width: 300px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            font-size: 14px;
+            line-height: 1.5;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .instructions h3 {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Hybrid Billing System</h1>
+        <label for="totalExpense">Total Expense (e.g. 74700):</label>
+        <input type="number" id="totalExpense" placeholder="Enter total expense">
+
+        <label class="apartment-label">Number of Residents in Each Apartment:</label>
+        <label for="apartment101">Apartment 101:</label>
+        <input type="number" id="apartment101" placeholder="Enter residents in Apartment 101">
+
+        <label for="apartment102">Apartment 102:</label>
+        <input type="number" id="apartment102" placeholder="Enter residents in Apartment 102">
+
+        <label for="apartment201">Apartment 201:</label>
+        <input type="number" id="apartment201" placeholder="Enter residents in Apartment 201">
+
+        <label for="apartment202">Apartment 202:</label>
+        <input type="number" id="apartment202" placeholder="Enter residents in Apartment 202">
+
+        <label for="apartment301">Apartment 301:</label>
+        <input type="number" id="apartment301" placeholder="Enter residents in Apartment 301">
+
+        <label for="apartment302">Apartment 302:</label>
+        <input type="number" id="apartment302" placeholder="Enter residents in Apartment 302">
+
+        <label for="apartment401">Apartment 401:</label>
+        <input type="number" id="apartment401" placeholder="Enter residents in Apartment 401">
+
+        <label for="apartment402">Apartment 402:</label>
+        <input type="number" id="apartment402" placeholder="Enter residents in Apartment 402">
+
+        <button onclick="calculateBills()">Calculate Bills</button>
+
+        <h3>Results (in Rupees):</h3>
+        <div id="results"></div>
+    </div>
+
+    <div class="instructions">
+        <h3>Calculation Rules</h3>
+        <p><strong>Total Expense:</strong> Enter the total monthly expense.</p>
+        <p><strong>Fixed Cost (40%):</strong> 40% of the total expense is distributed equally among all apartments.</p>
+        <p><strong>Variable Cost (60%):</strong> 60% of the total expense is distributed based on the number of residents in each apartment.</p>
+        <p><strong>Fixed Cost per Apartment:</strong> Total Fixed Cost ÷ 8 apartments.</p>
+        <p><strong>Variable Cost per Resident:</strong> Total Variable Cost ÷ Total Residents.</p>
+        <p><strong>Total Bill for Each Apartment:</strong> Fixed Cost per Apartment + Variable Cost based on the number of residents.</p>
+    </div>
+
+    <script>
+        function calculateBills() {
+            const totalExpense = parseFloat(document.getElementById("totalExpense").value);
+
+            const residents = [
+                parseInt(document.getElementById("apartment101").value),
+                parseInt(document.getElementById("apartment102").value),
+                parseInt(document.getElementById("apartment201").value),
+                parseInt(document.getElementById("apartment202").value),
+                parseInt(document.getElementById("apartment301").value),
+                parseInt(document.getElementById("apartment302").value),
+                parseInt(document.getElementById("apartment401").value),
+                parseInt(document.getElementById("apartment402").value)
+            ];
+
+            const apartmentNumbers = [101, 102, 201, 202, 301, 302, 401, 402];
+            const numApartments = residents.length;
+            const totalResidents = residents.reduce((a, b) => a + b, 0);
+
+            const fixedRatio = 0.4;
+            const fixedCost = totalExpense * fixedRatio;
+            const variableCost = totalExpense * (1 - fixedRatio);
+
+            const fixedCostPerApartment = fixedCost / numApartments;
+            const variableCostPerResident = variableCost / totalResidents;
+
+            let results = '';
+            for (let i = 0; i < numApartments; i++) {
+                const apartmentVariableCost = residents[i] * variableCostPerResident;
+                const totalBill = fixedCostPerApartment + apartmentVariableCost;
+                results += `Apartment ${apartmentNumbers[i]}: ${totalBill.toFixed(2)} Rupees<br>`;
+            }
+
+            document.getElementById("results").innerHTML = results;
+        }
+    </script>
+
+</body>
+</html>
