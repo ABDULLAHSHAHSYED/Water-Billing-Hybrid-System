@@ -96,9 +96,9 @@
     <div class="instructions">
         <h3>Calculation Rules</h3>
         <p><strong>Total Expense:</strong> Enter the total monthly expense.</p>
-        <p><strong>Fixed Cost (40%):</strong> 40% of the total expense is distributed equally among all apartments.</p>
+        <p><strong>Fixed Cost (40%):</strong> 40% of the total expense is distributed equally among apartments with residents.</p>
         <p><strong>Variable Cost (60%):</strong> 60% of the total expense is distributed based on the number of residents in each apartment.</p>
-        <p><strong>Fixed Cost per Apartment:</strong> Total Fixed Cost ÷ 8 apartments.</p>
+        <p><strong>Fixed Cost per Apartment:</strong> Total Fixed Cost ÷ Apartments with Residents.</p>
         <p><strong>Variable Cost per Resident:</strong> Total Variable Cost ÷ Total Residents.</p>
         <p><strong>Total Bill for Each Apartment:</strong> Fixed Cost per Apartment + Variable Cost based on the number of residents.</p>
     </div>
@@ -108,32 +108,36 @@
             const totalExpense = parseFloat(document.getElementById("totalExpense").value);
 
             const residents = [
-                parseInt(document.getElementById("apartment101").value),
-                parseInt(document.getElementById("apartment102").value),
-                parseInt(document.getElementById("apartment201").value),
-                parseInt(document.getElementById("apartment202").value),
-                parseInt(document.getElementById("apartment301").value),
-                parseInt(document.getElementById("apartment302").value),
-                parseInt(document.getElementById("apartment401").value),
-                parseInt(document.getElementById("apartment402").value)
+                parseInt(document.getElementById("apartment101").value) || 0,
+                parseInt(document.getElementById("apartment102").value) || 0,
+                parseInt(document.getElementById("apartment201").value) || 0,
+                parseInt(document.getElementById("apartment202").value) || 0,
+                parseInt(document.getElementById("apartment301").value) || 0,
+                parseInt(document.getElementById("apartment302").value) || 0,
+                parseInt(document.getElementById("apartment401").value) || 0,
+                parseInt(document.getElementById("apartment402").value) || 0
             ];
 
             const apartmentNumbers = [101, 102, 201, 202, 301, 302, 401, 402];
-            const numApartments = residents.length;
+            const apartmentsWithResidents = residents.filter(resident => resident > 0).length;
             const totalResidents = residents.reduce((a, b) => a + b, 0);
 
             const fixedRatio = 0.4;
             const fixedCost = totalExpense * fixedRatio;
             const variableCost = totalExpense * (1 - fixedRatio);
 
-            const fixedCostPerApartment = fixedCost / numApartments;
-            const variableCostPerResident = variableCost / totalResidents;
+            const fixedCostPerApartment = apartmentsWithResidents ? fixedCost / apartmentsWithResidents : 0;
+            const variableCostPerResident = totalResidents ? variableCost / totalResidents : 0;
 
             let results = '';
-            for (let i = 0; i < numApartments; i++) {
-                const apartmentVariableCost = residents[i] * variableCostPerResident;
-                const totalBill = fixedCostPerApartment + apartmentVariableCost;
-                results += `Apartment ${apartmentNumbers[i]}: ${totalBill.toFixed(2)} Rupees<br>`;
+            for (let i = 0; i < residents.length; i++) {
+                if (residents[i] > 0) {
+                    const apartmentVariableCost = residents[i] * variableCostPerResident;
+                    const totalBill = fixedCostPerApartment + apartmentVariableCost;
+                    results += `Apartment ${apartmentNumbers[i]}: ${totalBill.toFixed(2)} Rupees<br>`;
+                } else {
+                    results += `Apartment ${apartmentNumbers[i]}: No residents, no bill<br>`;
+                }
             }
 
             document.getElementById("results").innerHTML = results;
